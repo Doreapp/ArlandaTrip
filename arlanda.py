@@ -79,7 +79,7 @@ def merge_trips(firsts:Trip, seconds:Trip, correspondanceMin:int=5)->list:
     :param: correspondanceMin (int) [Optional] - time of the minimum corresponance, in minutes. Default is 5
     :return: trips (list) - list of the results trips (array of 2 trips)
     '''
-    print("Merge trips...")
+    print("Merging trips...")
     results = []
 
     # Min correspondance time
@@ -107,13 +107,11 @@ def request(isFrom:bool, isDeparture:bool, date:str, time:str) -> list:
     :return: trips (list) - list of available trips
     '''
     if isFrom:
-        print("Request from arlanda")
         jsonAtoM = api_call(API_KEY, ids['Arlanda'], ids['Märsta'], date, time, not isDeparture, 'atm')
         jsonMtoO = api_call(API_KEY, ids['Märsta'], ids['Odenplan'], date, time, not isDeparture, 'mto')
         firsts = parse(jsonAtoM)
         seconds = parse(jsonMtoO)
     else: 
-        print("Request to arlanda")
         jsonOtoM = api_call(API_KEY, ids['Odenplan'], ids['Märsta'], date, time, not isDeparture, 'otm')
         jsonMtoA = api_call(API_KEY, ids['Märsta'], ids['Arlanda'], date, time, not isDeparture, 'mta')
         firsts = parse(jsonOtoM)
@@ -153,10 +151,6 @@ if __name__ == '__main__':
         exit(1)
 
     isFrom, isDeparture, date, time = GUI().getInfo()
-    print("is from: ", isFrom)
-    print("is departure: ", isDeparture)
-    print("date", date)
-    print("time", time)
 
     trips = request(isFrom, isDeparture, date, time)
     print_results(trips)

@@ -75,8 +75,8 @@ class GUI:
     def getInfo(self):
         print("Hi, welcome to ToArlanda Schedule searcher")
         
-        print("Are you coming or going to arlanda ?")
-        fromGo = _input(['from','f','go','g'],"From(F) - Go(G)")
+        print("Are you going from or to arlanda ?")
+        fromGo = _input(['from','f','to','t'],"From(F) - To(T)")
 
         print("Do you want to search for a departure or arrival time ?")
         departureArrival = _input(['departure','d','arrival','a'], "Departure(D) - Arrival(A)")
