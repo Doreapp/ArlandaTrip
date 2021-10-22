@@ -2,26 +2,16 @@
 # TODO exports the results
 # TODO handle command line args
 
+import argparse
+import sys
 import requests
 import datetime
+
 from arlanda_gui import GUI
 from arlanda_parser import Trip, parse
+from exporters import exportCSV, exportMarkdown
 
 # https://developer.trafiklab.se/api/resrobot-reseplanerare/konsol
-
-# 2 possibilities
-#   * Use the console-GUI process, that ask for information along the way
-#   * Use the command line based implementation
-#
-# Decision tree
-# 
-# Go from or to arlanda: From(F) - Go(G)
-# (F)/(G) -> select departure or arrival time: Departure(D) - Arrival(A) 
-# (D) -> Now(N) or Later(L)
-# (A/DL) -> Input the day dd/mm and then the time with format hh:mm
-# -> Search for it
-# 
-# Args TODO
 
 # IDS map, from stop name to its id
 ids = dict()
@@ -143,6 +133,16 @@ def print_results(results:list):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--export-file","-xf",
+        help='Export results in specified file',
+        type=str,
+        nargs=1,
+        )
+
+    parsedArgs = parser.parse_args(sys.argv[1:])
+    print(parsedArgs)
+
     try:
         apiKeyFile = open('api_key.key', 'r')
         API_KEY = apiKeyFile.read()
@@ -154,3 +154,15 @@ if __name__ == '__main__':
 
     trips = request(isFrom, isDeparture, date, time)
     print_results(trips)
+
+    if parsedArgs.export_file is not None:
+        fileName = parsedArgs.export_file[0]
+        if fileName.endswith('.md'):
+            print("Exporting in markdown...")
+            exportMarkdown(fileName, trips)
+        else:
+            print("Exporting in CSV...")
+            exportCSV(fileName, trips)
+        print("Results saved in '"+parsedArgs.export_file[0]+"'.")
+
+
