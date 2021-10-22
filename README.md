@@ -23,9 +23,10 @@ Then, we are merging the result to show available trips
     cd ArlandaTrip
     ```
 
-2. Get yourself an API Key from [SL API](https://developer.trafiklab.se/)
+2. Get yourself an API Key from [SL API](https://developer.trafiklab.se/).
+    
     You need to create an account, then a project, and then tell that your project requires [SL Travel Planner](https://developer.trafiklab.se/api/sl-reseplanerare-31). 
-    After that, you'll have a free API Key, with a limited usage, that sould match your needs
+    After that, you'll have a free API Key, with a limited usage, that should match your needs
 
 3. Put your api key into a file named `api_key.key` under `ArlandaTrip` folder
     
@@ -38,6 +39,14 @@ Run
 ```
 python3 arlanda.py
 ```
+
+**Options**
+* use `-h` or `--help` to display an help message, explaining each handled argument
+* use `-kf` or `--key-file` to set the actual location of the file where is stored your API key (by default, it will use `api_key.key` file)
+* use `-xf` or `--export-file` to request the export of the result in an external file. Specify the file you want the export to be in.
+    * If the extension of the file is `.md`, then a markdown file will be exported, containing a table in it
+    * Otherwise, regardless of the extension, a `csv` file will be exported, with `;` as separators.
+
 
 Then, answer the questions about your query
 
@@ -99,6 +108,3 @@ Results:
         Take [583] towards 'Märsta station (Sigtuna kn)'
     Wed 20 19:00 - Arlanda terminal 2-3 buss (Sigtuna kn)
 ```
-
-### Command line 
-*Command line execution is not available yet, pull requests are wellcome*
