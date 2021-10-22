@@ -20,7 +20,7 @@ ids["Odenplan"] = 740001618
 ids["Arlanda"] = 740020671
 
 # API Key
-API_KEY = ''
+api_key = ''
 
 def api_call(key:str, originId:int, destId:int, date:str, time:str, searchForArrival:bool, filename:str='.cache')->str:
     '''
@@ -97,13 +97,13 @@ def request(isFrom:bool, isDeparture:bool, date:str, time:str) -> list:
     :return: trips (list) - list of available trips
     '''
     if isFrom:
-        jsonAtoM = api_call(API_KEY, ids['Arlanda'], ids['Märsta'], date, time, not isDeparture, 'atm')
-        jsonMtoO = api_call(API_KEY, ids['Märsta'], ids['Odenplan'], date, time, not isDeparture, 'mto')
+        jsonAtoM = api_call(api_key, ids['Arlanda'], ids['Märsta'], date, time, not isDeparture, 'atm')
+        jsonMtoO = api_call(api_key, ids['Märsta'], ids['Odenplan'], date, time, not isDeparture, 'mto')
         firsts = parse(jsonAtoM)
         seconds = parse(jsonMtoO)
     else: 
-        jsonOtoM = api_call(API_KEY, ids['Odenplan'], ids['Märsta'], date, time, not isDeparture, 'otm')
-        jsonMtoA = api_call(API_KEY, ids['Märsta'], ids['Arlanda'], date, time, not isDeparture, 'mta')
+        jsonOtoM = api_call(api_key, ids['Odenplan'], ids['Märsta'], date, time, not isDeparture, 'otm')
+        jsonMtoA = api_call(api_key, ids['Märsta'], ids['Arlanda'], date, time, not isDeparture, 'mta')
         firsts = parse(jsonOtoM)
         seconds = parse(jsonMtoA)
     
@@ -131,24 +131,42 @@ def print_results(results:list):
         print("        Take ["+second.lineNumber+"] towards '"+second.lineDirection+"'")
         print("    "+second.end.time.strftime(formatTime)+" - "+second.end.name)
 
+def _parseArgs():
+    '''
+    Parse Command line arguments
 
-if __name__ == '__main__':
+    :return: Namespace containing arguments values
+    '''
     parser = argparse.ArgumentParser()
     parser.add_argument("--export-file","-xf",
         help='Export results in specified file',
         type=str,
         nargs=1,
-        )
+    )
+    parser.add_argument('--key-file','-kf',
+        help='API Key file location',
+        type=str,
+        nargs=1
+    )
+    return parser.parse_args(sys.argv[1:])
 
-    parsedArgs = parser.parse_args(sys.argv[1:])
-    print(parsedArgs)
-
+def _loadApiKey(filename):
+    global api_key
     try:
-        apiKeyFile = open('api_key.key', 'r')
-        API_KEY = apiKeyFile.read()
+        apiKeyFile = open(filename, 'r')
+        api_key = apiKeyFile.read()
     except:
-        print("Error while reading the API Key. Make sure your API key is stored in 'api_key.key'")
+        print("Error while reading the API Key. Make sure your API key is stored in '"+filename+"'")
         exit(1)
+    
+
+if __name__ == '__main__':
+    parsedArgs = _parseArgs()
+    
+    if parsedArgs.key is None:
+        _loadApiKey('api_key.key')
+    else:
+        _loadApiKey(parsedArgs.key[0])
 
     isFrom, isDeparture, date, time = GUI().getInfo()
 
